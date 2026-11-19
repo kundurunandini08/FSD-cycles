@@ -1,3 +1,4 @@
+
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
@@ -36,11 +37,12 @@ app.use(logger);
 
 // Route-specific validation middleware
 const validate = (req, res, next) => {
-    if(!req.body){
-        const err=new Error("Patients details missing");
-        err.statusCode = 400;
-        throw err;
-    }
+  if (!req.body) {
+    const err = new Error("Patient details missing");
+    err.statusCode = 400;
+    throw err;
+  }
+
   const { name, gender, ward } = req.body;
 
   if (!name || !gender || !ward) {
@@ -53,17 +55,14 @@ const validate = (req, res, next) => {
 };
 
 // Create patient
-// POST http://localhost:6500/api/v1/patients
-// Body: { "name": "Mahi", "gender": "Female", "ward": "ICU" }
-
+// POST /api/v1/patients
 app.post("/api/v1/patients", validate, (req, res) => {
   res.status(200).send("Patient record created successfully");
 });
 
 // Read all patients
-// GET http://localhost:6500/api/v1/patients
-// GET http://localhost:6500/api/v1/patients?ward=ICU
-
+// GET /api/v1/patients
+// GET /api/v1/patients?ward=ICU
 app.get("/api/v1/patients", (req, res) => {
   const ward = req.query.ward;
 
@@ -72,38 +71,34 @@ app.get("/api/v1/patients", (req, res) => {
       `Patients of ${ward} ward fetched successfully`
     );
   }
-  else{
+
   res.status(200).send("All patients fetched successfully");
-  }
 });
 
 // Read one patient
-// GET http://localhost:6500/api/v1/patients/:id
-
+// GET /api/v1/patients/:id
 app.get("/api/v1/patients/:id", (req, res) => {
   const id = req.params.id;
 
   res.status(200).send(
-    'Patient with id ${id} fetched successfully'
+    `Patient with id ${id} fetched successfully`
   );
 });
 
 // Update one patient
-// PUT http://localhost:6500/api/v1/patients/:id
-
-app.put("/api/v1/patients/:id",validate, (req, res) => {
+// PUT /api/v1/patients/:id
+app.put("/api/v1/patients/:id", validate, (req, res) => {
   const id = req.params.id;
 
   res.status(200).send(
-    'Patient with id ${id} updated successfully'
+    `Patient with id ${id} updated successfully`
   );
 });
 
 // Delete one patient
-// DELETE http://localhost:6500/api/v1/patients/:id
-
+// DELETE /api/v1/patients/:id
 app.delete("/api/v1/patients/:id", (req, res) => {
-  const id  = req.params.id;
+  const id = req.params.id;
 
   res.status(200).send(
     `Patient with id ${id} deleted successfully`
@@ -124,8 +119,8 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT = 6500;
+const PORT = process.env.PORT || 6500;
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
